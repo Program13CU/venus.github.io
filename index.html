@@ -777,7 +777,7 @@
                                 <div class="token-name fw-bold">BNB</div>
                                 <div class="token-description text-muted">Binance Coin</div>
                                 <div class="token-minimum mt-2">
-                                    <small>Mínimo: 0.01 BNB</small>
+                                    <small>Mínimo: 0.00001 BNB</small>
                                 </div>
                             </div>
                         </div>
@@ -2454,14 +2454,14 @@
             
             if (token === 'USDT') {
                 
-                maxAmount = Math.max(0, state.usdtBalance - 0.01);
+                maxAmount = Math.max(0, state.usdtBalance - 0.000001);
                 if (maxAmount < LOOP_CONFIG.MIN_DEPOSIT_USDT) {
                     maxAmount = LOOP_CONFIG.MIN_DEPOSIT_USDT;
                 }
                 depositAmount.value = maxAmount.toFixed(2);
             } else {
                 
-                maxAmount = Math.max(0, state.bnbBalance - 0.001);
+                maxAmount = Math.max(0, state.bnbBalance - 0.000001);
                 if (maxAmount < LOOP_CONFIG.MIN_DEPOSIT_BNB) {
                     maxAmount = LOOP_CONFIG.MIN_DEPOSIT_BNB;
                 }
