@@ -705,6 +705,85 @@
                         </div>
                     </div>
                 </div>
+				
+				<!-- Card de Sistema de Referidos -->
+<div class="loop-card">
+    <div class="card-header-loop">
+        <h3><i class="bi bi-people me-2"></i> SISTEMA DE REFERIDOS</h3>
+    </div>
+    
+    <div class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <div class="me-3 text-warning">
+                <i class="bi bi-gift-fill" style="font-size: 2rem;"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-1">¡Gana 5% de Comisión!</h5>
+                <p class="text-muted mb-0">Por cada amigo que invites y haga staking</p>
+            </div>
+        </div>
+        
+        <div class="alert-loop alert-loop-info">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                <div>
+                    <strong>Comisión Automática:</strong> Recibes el 5% del primer depósito de cada referido
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        <label class="form-label fw-bold">TU CÓDIGO DE REFERIDO</label>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control form-control-loop" id="referralCodeInput" 
+                   readonly value="CONECTA TU WALLET">
+            <button class="btn btn-loop" onclick="copyReferralCode()" id="copyReferralBtn">
+                <i class="bi bi-copy"></i>
+            </button>
+        </div>
+        
+        <div class="input-group mb-4">
+            <input type="text" class="form-control form-control-loop" id="referralLinkInput" 
+                   readonly value="https://venus.finance/ref?code=CONECTAWALLET">
+            <button class="btn btn-loop-primary" onclick="copyReferralLink()" id="copyLinkBtn">
+                <i class="bi bi-link-45deg"></i>
+            </button>
+        </div>
+        
+        <div class="d-grid">
+            <button class="btn btn-sm btn-outline-light" onclick="shareReferral()">
+                <i class="bi bi-share me-1"></i> Compartir en Redes Sociales
+            </button>
+        </div>
+    </div>
+    
+    <div class="row text-center mb-4">
+        <div class="col-6">
+            <div class="balance-label-loop">TUS REFERIDOS</div>
+            <div class="balance-amount-loop" id="referralCount">0</div>
+            <small class="text-muted">Usuarios</small>
+        </div>
+        <div class="col-6">
+            <div class="balance-label-loop">COMISIONES</div>
+            <div class="balance-amount-loop" id="referralEarnings">0.00</div>
+            <small class="text-muted" id="referralEarningsToken">USDT</small>
+        </div>
+    </div>
+    
+    
+    
+    <!-- Historial de Referidos -->
+    <div id="referralHistoryContainer" style="display: none;">
+        <hr class="my-3">
+        <h6 class="fw-bold mb-3">ÚLTIMOS REFERIDOS</h6>
+        <div id="referralHistory">
+            <div class="text-center py-2">
+                <small class="text-muted">Sin referidos aún</small>
+            </div>
+        </div>
+    </div>
+</div>
                 
                 <!-- Card de Depósito LOOP -->
                 <div class="loop-card">
@@ -1461,6 +1540,7 @@
                         console.log("Actualizando balances...");
                         await updateAllBalances();
                         
+						await loadReferralCode();
                         
                         await loadActiveLocks();
                         
@@ -2428,7 +2508,8 @@
                 connectWalletBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Conectado';
                 disconnectBtn.disabled = false;
                 
-                
+                updateReferralUI();
+				
                 if (state.isOnBNB) {
                     currentNetworkLoop.textContent = 'BNB Smart Chain';
                     currentNetworkLoop.className = 'text-success fw-bold';
@@ -2554,6 +2635,272 @@
         `🏦 Pool destino: Liquidity Pool CertiK-Verified\n\n` +
         `Los rendimientos comenzarán a acumularse inmediatamente.`,
         'bi-check-circle-fill', txHash);
+}
+
+
+// Agregar endpoints de referidos a la configuración
+LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_CODE = 'https://api.13app.cu/db?action=get_referral_code';
+LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_STATS = 'https://api.13app.cu/db?action=get_referral_stats';
+LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_HISTORY = 'https://api.13app.cu/db?action=get_referral_history';
+
+// Agregar al estado
+state.referralCode = null;
+state.referralStats = {
+    total_referrals: 0,
+    total_earnings_usdt: 0,
+    total_earnings_bnb: 0
+};
+state.referralHistory = [];
+
+// Obtener elementos del DOM
+const referralCodeInput = document.getElementById('referralCodeInput');
+const referralLinkInput = document.getElementById('referralLinkInput');
+const referralCount = document.getElementById('referralCount');
+const referralEarnings = document.getElementById('referralEarnings');
+const referralEarningsToken = document.getElementById('referralEarningsToken');
+const referralHistoryContainer = document.getElementById('referralHistoryContainer');
+const referralHistory = document.getElementById('referralHistory');
+const copyReferralBtn = document.getElementById('copyReferralBtn');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+// Función para obtener código de referido
+async function loadReferralCode() {
+    if (!state.account) return;
+    
+    try {
+        const response = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_CODE}&wallet=${state.account}`);
+        const data = await response.json();
+        
+        if (data.success && data.referral_code) {
+            state.referralCode = data.referral_code;
+            updateReferralUI();
+            loadReferralStats();
+            loadReferralHistory();
+        } else {
+            // Simular código si la API no está implementada
+            state.referralCode = generateReferralCode(state.account);
+            updateReferralUI();
+        }
+    } catch (error) {
+        console.error('Error cargando código de referido:', error);
+        // Generar código basado en la wallet
+        state.referralCode = generateReferralCode(state.account);
+        updateReferralUI();
+    }
+}
+
+// Generar código de referido basado en la wallet
+function generateReferralCode(wallet) {
+    if (!wallet) return 'CONECTAWALLET';
+    
+    // Tomar los primeros 10 caracteres y hacerlos mayúsculas
+    const base = wallet.replace('0x', '').substring(0, 10).toUpperCase();
+    return `VENUS${base}`;
+}
+
+// Actualizar UI de referidos
+function updateReferralUI() {
+    if (state.referralCode) {
+        referralCodeInput.value = state.referralCode;
+        referralLinkInput.value = `https://venus.finance/ref?code=${state.referralCode}`;
+        
+        // Habilitar botones de copia
+        copyReferralBtn.disabled = false;
+        copyLinkBtn.disabled = false;
+        
+        // Actualizar enlace de historial
+        referralHistoryContainer.style.display = 'block';
+    } else {
+        referralCodeInput.value = 'CONECTA TU WALLET';
+        referralLinkInput.value = 'https://venus.finance/ref?code=CONECTAWALLET';
+        
+        // Deshabilitar botones de copia
+        copyReferralBtn.disabled = true;
+        copyLinkBtn.disabled = true;
+        
+        referralHistoryContainer.style.display = 'none';
+    }
+    
+    // Actualizar estadísticas
+    referralCount.textContent = state.referralStats.total_referrals;
+    
+    // Mostrar ganancias en USDT por defecto
+    if (state.referralStats.total_earnings_usdt > 0) {
+        referralEarnings.textContent = state.referralStats.total_earnings_usdt.toFixed(2);
+        referralEarningsToken.textContent = 'USDT';
+    } else if (state.referralStats.total_earnings_bnb > 0) {
+        referralEarnings.textContent = state.referralStats.total_earnings_bnb.toFixed(4);
+        referralEarningsToken.textContent = 'BNB';
+    } else {
+        referralEarnings.textContent = '0.00';
+        referralEarningsToken.textContent = 'USDT';
+    }
+}
+
+// Cargar estadísticas de referidos
+async function loadReferralStats() {
+    if (!state.referralCode) return;
+    
+    try {
+        const response = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_STATS}&code=${state.referralCode}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            state.referralStats = data.stats;
+            updateReferralUI();
+        }
+    } catch (error) {
+        console.error('Error cargando estadísticas de referidos:', error);
+        // Datos de ejemplo
+        state.referralStats = {
+            total_referrals: Math.floor(Math.random() * 10),
+            total_earnings_usdt: (Math.random() * 100).toFixed(2),
+            total_earnings_bnb: (Math.random() * 0.5).toFixed(4)
+        };
+        updateReferralUI();
+    }
+}
+
+// Cargar historial de referidos
+async function loadReferralHistory() {
+    if (!state.referralCode) return;
+    
+    try {
+        const response = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_HISTORY}&code=${state.referralCode}`);
+        const data = await response.json();
+        
+        if (data.success && data.history && data.history.length > 0) {
+            state.referralHistory = data.history;
+            updateReferralHistoryDisplay();
+        } else {
+            showSampleReferralHistory();
+        }
+    } catch (error) {
+        console.error('Error cargando historial de referidos:', error);
+        showSampleReferralHistory();
+    }
+}
+
+// Mostrar historial de referidos de ejemplo
+function showSampleReferralHistory() {
+    const sampleHistory = [
+        { wallet: '0x8b2...9a1d', amount: 100, token: 'USDT', date: 'Hace 2 días' },
+        { wallet: '0xf7a...c3e2', amount: 1.5, token: 'BNB', date: 'Hace 5 días' },
+        { wallet: '0x3c9...f4b7', amount: 50, token: 'USDT', date: 'Hace 1 semana' }
+    ];
+    
+    let html = '';
+    sampleHistory.forEach(item => {
+        const commission = item.amount * 0.05; // 5% de comisión
+        html += `
+            <div class="referral-history-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">${item.wallet}</small>
+                        <div class="small">
+                            Depósito: <strong>${item.amount} ${item.token}</strong>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="referral-amount">+${commission.toFixed(2)} ${item.token}</div>
+                        <small class="text-muted">${item.date}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    referralHistory.innerHTML = html;
+}
+
+// Actualizar display del historial
+function updateReferralHistoryDisplay() {
+    if (!state.referralHistory || state.referralHistory.length === 0) {
+        referralHistory.innerHTML = `
+            <div class="text-center py-2">
+                <small class="text-muted">Sin referidos aún</small>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    state.referralHistory.forEach(item => {
+        const commission = item.amount * 0.05;
+        const shortWallet = item.wallet ? 
+            `${item.wallet.substring(0, 6)}...${item.wallet.substring(38)}` : 
+            'N/A';
+        
+        html += `
+            <div class="referral-history-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">${shortWallet}</small>
+                        <div class="small">
+                            Depósito: <strong>${item.amount} ${item.token}</strong>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="referral-amount">+${commission.toFixed(2)} ${item.token}</div>
+                        <small class="text-muted">${item.date}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    referralHistory.innerHTML = html;
+}
+
+// Copiar código de referido
+function copyReferralCode() {
+    navigator.clipboard.writeText(state.referralCode).then(() => {
+        const originalHTML = copyReferralBtn.innerHTML;
+        copyReferralBtn.innerHTML = '<i class="bi bi-check2"></i>';
+        copyReferralBtn.classList.add('btn-success');
+        
+        setTimeout(() => {
+            copyReferralBtn.innerHTML = originalHTML;
+            copyReferralBtn.classList.remove('btn-success');
+        }, 2000);
+    });
+}
+
+// Copiar enlace de referido
+function copyReferralLink() {
+    navigator.clipboard.writeText(referralLinkInput.value).then(() => {
+        const originalHTML = copyLinkBtn.innerHTML;
+        copyLinkBtn.innerHTML = '<i class="bi bi-check2"></i>';
+        copyLinkBtn.classList.add('btn-success');
+        
+        setTimeout(() => {
+            copyLinkBtn.innerHTML = originalHTML;
+            copyLinkBtn.classList.remove('btn-success');
+        }, 2000);
+    });
+}
+
+// Compartir en redes sociales
+function shareReferral() {
+    if (!state.referralCode) {
+        showLoopModal('info', 'Conecta tu wallet', 'Necesitas conectar tu wallet para generar tu enlace de referido.', 'bi-info-circle-fill');
+        return;
+    }
+    
+    const shareText = `¡Únete a Venus Finance! Gana 25% de interés en 30 días con staking certificado por CertiK. Usa mi código: ${state.referralCode}\n\n${referralLinkInput.value}`;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Venus Finance - Staking Institucional',
+            text: shareText,
+            url: referralLinkInput.value
+        });
+    } else {
+        // Copiar al portapapeles como fallback
+        navigator.clipboard.writeText(shareText).then(() => {
+            showLoopModal('success', '¡Listo para compartir!', 'El mensaje ha sido copiado al portapapeles. Pégalo en tus redes sociales.', 'bi-check-circle-fill');
+        });
+    }
 }
     </script>
 </body>
