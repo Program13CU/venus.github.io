@@ -1568,6 +1568,7 @@
                     await initUSDTContract();
                     await updateAllBalances();
                     await loadActiveLocks();
+					await loadReferralData();
                 } else {
                     
                     state.activeLocks = [];
@@ -2631,35 +2632,59 @@
         'bi-check-circle-fill', txHash);
 }
 
-// Función para cargar datos de referidos
 async function loadReferralData() {
-    if (!state.account) return;
+    if (!state.account) {
+        console.log("No hay cuenta conectada para cargar datos de referidos");
+        document.getElementById('userReferralCode').value = "Conecta tu wallet";
+        return;
+    }
     
     try {
+        console.log("Cargando datos de referidos para:", state.account);
+        
         // Obtener código de referido del usuario
         const codeResponse = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_CODE}&wallet=${state.account}`);
+        
+        if (!codeResponse.ok) {
+            throw new Error(`Error HTTP: ${codeResponse.status}`);
+        }
+        
         const codeData = await codeResponse.json();
+        console.log("Respuesta de código de referido:", codeData);
         
         if (codeData.success && codeData.referral_code) {
             state.userReferralCode = codeData.referral_code;
             document.getElementById('userReferralCode').value = codeData.referral_code;
+            console.log("Código de referido establecido:", codeData.referral_code);
+        } else {
+            console.warn("No se pudo obtener el código de referido:", codeData.message);
+            document.getElementById('userReferralCode').value = "Error al cargar";
         }
         
         // Obtener estadísticas de referidos
         const statsResponse = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_REFERRAL_STATS}&wallet=${state.account}`);
-        const statsData = await statsResponse.json();
         
-        if (statsData.success) {
-            state.referralStats = statsData.stats;
-            document.getElementById('totalReferrals').textContent = statsData.stats.total_referrals;
-            document.getElementById('referralEarnings').textContent = parseFloat(statsData.stats.total_earnings).toFixed(2);
+        if (statsResponse.ok) {
+            const statsData = await statsResponse.json();
+            console.log("Respuesta de estadísticas de referidos:", statsData);
+            
+            if (statsData.success) {
+                state.referralStats = statsData.stats;
+                document.getElementById('totalReferrals').textContent = statsData.stats.total_referrals;
+                document.getElementById('referralEarnings').textContent = parseFloat(statsData.stats.total_earnings).toFixed(2);
+                console.log("Estadísticas de referidos cargadas:", statsData.stats);
+            }
+        } else {
+            console.warn("No se pudieron obtener estadísticas de referidos");
         }
+        
     } catch (error) {
         console.error('Error cargando datos de referidos:', error);
+        document.getElementById('userReferralCode').value = "Error de conexión";
     }
 }
 
-// Función para verificar código de referido
+// Función para verificar código de referido (mejorada con logs)
 async function verifyReferralCode() {
     const codeInput = document.getElementById('inputReferralCode');
     const code = codeInput.value.trim().toUpperCase();
@@ -2678,15 +2703,24 @@ async function verifyReferralCode() {
     }
     
     try {
+        console.log("Verificando código de referido:", code);
         const response = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.VERIFY_REFERRAL}&code=${code}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log("Respuesta de verificación:", data);
         
         if (data.success) {
             state.referralCode = code;
             statusElement.innerHTML = `<span class="text-success"><i class="bi bi-check-circle me-1"></i> Código válido. Referido por: ${data.wallet_address.substring(0, 6)}...${data.wallet_address.substring(38)}</span>`;
+            console.log("Código de referido verificado correctamente:", code);
         } else {
             state.referralCode = null;
             statusElement.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i> Código inválido</span>';
+            console.log("Código de referido inválido:", code);
         }
     } catch (error) {
         console.error('Error verificando código:', error);
@@ -2695,15 +2729,18 @@ async function verifyReferralCode() {
     }
 }
 
-// Función para copiar código de referido
+// Función para copiar código de referido (mejorada)
 function copyReferralCode() {
-    if (!state.userReferralCode) {
+    if (!state.userReferralCode || state.userReferralCode === "Conecta tu wallet" || state.userReferralCode === "Error de conexión") {
         showLoopModal('info', 'Conecta tu wallet', 'Conecta tu wallet para obtener tu código de referido.', 'bi-info-circle-fill');
         return;
     }
     
     navigator.clipboard.writeText(state.userReferralCode).then(() => {
-        showLoopModal('success', 'Código copiado', `Tu código ${state.userReferralCode} ha sido copiado al portapapeles.`, 'bi-check-circle-fill');
+        showLoopModal('success', 'Código copiado', `Tu código <strong>${state.userReferralCode}</strong> ha sido copiado al portapapeles.`, 'bi-check-circle-fill');
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+        showLoopModal('error', 'Error', 'No se pudo copiar el código. Intenta manualmente.', 'bi-exclamation-triangle-fill');
     });
 }
     </script>
