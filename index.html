@@ -2720,8 +2720,7 @@ function copyReferralLink() {
     
     navigator.clipboard.writeText(link).then(() => {
         showLoopModal('success', 'Enlace copiado', 
-            `<strong>Enlace copiado al portapapeles:</strong><br>
-             <small class="text-muted">${link}</small><br><br>
+            `Enlace copiado al portapapeles: ${link}
              Comparte este enlace con tus amigos para ganar comisiones.`, 
             'bi-link-45deg');
         
@@ -2748,7 +2747,7 @@ function copyReferralCodeOnly() {
     
     navigator.clipboard.writeText(state.userReferralCode).then(() => {
         showLoopModal('success', 'Código copiado', 
-            `Código <strong>${state.userReferralCode}</strong> copiado al portapapeles.`, 
+            `Código ${state.userReferralCode} copiado al portapapeles.`, 
             'bi-clipboard-check');
     }).catch(err => {
         console.error('Error al copiar código:', err);
@@ -2835,7 +2834,7 @@ function checkUrlForReferralCode() {
         }
         
         showLoopModal('info', 'Código de referido detectado', 
-            `Se detectó el código <strong>${refCode.toUpperCase()}</strong> en la URL.<br>
+            `Se detectó el código ${refCode.toUpperCase()} en la URL.
              Si quieres apoyar al referido, verifica el código.`, 
             'bi-link-45deg');
     }
