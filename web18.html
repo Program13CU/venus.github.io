@@ -1,0 +1,2560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venus - Sistema de Depósito con 25% Interés</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1a5fb4;
+            --primary-green: #26a17b;
+            --dark-bg: #0a2540;
+            --card-bg: #0f3054;
+            --accent-yellow: #f0b90b;
+            --loop-orange: #ff6b35;
+            --light-text: #e9ecef;
+            --dark-text: #1c1c1c;
+        }
+        
+		.text-muted{
+			color: rgba(247, 143, 68, 0.85) !important;
+		}
+		
+        body {
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(26, 95, 180, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(38, 161, 123, 0.15) 0%, transparent 40%);
+        }
+        
+        /* Navbar estilo LOOP */
+        .navbar-loop {
+            background: linear-gradient(90deg, var(--dark-bg) 0%, #0c1e35 100%);
+            border-bottom: 3px solid var(--loop-orange);
+            padding: 1rem 0;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .navbar-brand-loop {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--loop-orange), #ff9a3c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand-loop i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        /* Botones LOOP */
+        .btn-loop {
+            background: linear-gradient(90deg, var(--loop-orange), #ff9a3c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 28px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-loop:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
+            color: white;
+        }
+        
+        .btn-loop-primary {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+        }
+        
+        .btn-loop-primary:hover {
+            box-shadow: 0 10px 25px rgba(26, 95, 180, 0.4);
+        }
+        
+        /* Selector de Token */
+        .token-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .token-option {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .token-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
+        }
+        
+        .token-option.active {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: var(--loop-orange);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.2);
+        }
+        
+        .token-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .token-usdt .token-icon {
+            background: linear-gradient(135deg, #26a17b, #1e8668);
+        }
+        
+        .token-bnb .token-icon {
+            background: linear-gradient(135deg, #f0b90b, #d6a309);
+        }
+        
+        /* Hero Section LOOP */
+        .hero-loop {
+            background: linear-gradient(135deg, rgba(10, 37, 64, 0.95) 0%, rgba(21, 52, 89, 0.95) 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-loop::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .hero-loop-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .loop-badge {
+            background: linear-gradient(90deg, var(--loop-orange), #ff9a3c);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        /* Cards LOOP */
+        .loop-card {
+            background: linear-gradient(145deg, var(--card-bg), #0a2848);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loop-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--loop-orange), #ff9a3c);
+        }
+        
+        .loop-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+        }
+        
+        .card-header-loop {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-header-loop h3 {
+            font-weight: 800;
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        /* Balances LOOP */
+        .balance-loop {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(38, 161, 123, 0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .balance-amount-loop {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin: 0.5rem 0;
+            background: linear-gradient(90deg, #ff9a3c, #ffcc00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        
+        .balance-label-loop {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        
+        /* Status indicators */
+        .status-loop {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-connected-loop {
+            background: rgba(38, 161, 123, 0.2);
+            color: var(--primary-green);
+            border: 1px solid rgba(38, 161, 123, 0.3);
+        }
+        
+        .status-disconnected-loop {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b8b;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Wallet address display */
+        .wallet-loop {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            word-break: break-all;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        
+        /* Formularios LOOP */
+        .form-control-loop {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-loop:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--loop-orange);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+        }
+        
+        /* Progress bar LOOP */
+        .progress-loop {
+            height: 12px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+        
+        .progress-loop-bar {
+            background: linear-gradient(90deg, var(--loop-orange), #ff9a3c);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+        
+        /* Alertas LOOP */
+        .alert-loop {
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid transparent;
+            display: none;
+        }
+        
+        .alert-loop-success {
+            background: rgba(38, 161, 123, 0.15);
+            border-color: rgba(38, 161, 123, 0.4);
+            display: block;
+        }
+        
+        .alert-loop-error {
+            background: rgba(220, 53, 69, 0.15);
+            border-color: rgba(220, 53, 69, 0.4);
+            display: block;
+        }
+        
+        .alert-loop-warning {
+            background: rgba(255, 193, 7, 0.15);
+            border-color: rgba(255, 193, 7, 0.4);
+            display: block;
+        }
+        
+        .alert-loop-info {
+            background: rgba(23, 162, 184, 0.15);
+            border-color: rgba(23, 162, 184, 0.4);
+            display: block;
+        }
+        
+        /* Network badge */
+        .network-badge-loop {
+            background: linear-gradient(90deg, var(--accent-yellow), #ffcc00);
+            color: var(--dark-text);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        /* Countdown timer */
+        .countdown-loop {
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+        
+        .countdown-label-loop {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        /* Footer LOOP */
+        .footer-loop {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px 15px 0 0;
+        }
+        
+        /* Loading animation */
+        .loading-loop {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--loop-orange);
+            animation: spin-loop 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin-loop {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Interest calculation box */
+        .interest-box {
+            background: linear-gradient(135deg, rgba(38, 161, 123, 0.1), rgba(26, 95, 180, 0.1));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(38, 161, 123, 0.2);
+        }
+        
+        /* Deposit history */
+        .deposit-history-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--loop-orange);
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .deposit-history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+        
+        /* Active Locks Styles */
+        .active-lock-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .active-lock-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--loop-orange);
+        }
+        
+        .lock-countdown {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--loop-orange);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .lock-amount {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .lock-token-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .lock-usdt-badge {
+            background: rgba(38, 161, 123, 0.2);
+            color: var(--primary-green);
+            border: 1px solid rgba(38, 161, 123, 0.3);
+        }
+        
+        .lock-bnb-badge {
+            background: rgba(240, 185, 11, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(240, 185, 11, 0.3);
+        }
+        
+        /* Modal Custom Styles */
+        .modal-loop {
+            background: rgba(10, 37, 64, 0.95);
+        }
+        
+        .modal-loop .modal-content {
+            background: linear-gradient(145deg, var(--card-bg), #0a2848);
+            border: 1px solid var(--loop-orange);
+            border-radius: 15px;
+            color: var(--light-text);
+        }
+        
+        .modal-loop .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-loop .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-loop .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-loop {
+                padding: 2rem 1rem;
+            }
+            
+            .balance-amount-loop {
+                font-size: 2.2rem;
+            }
+            
+            .countdown-loop {
+                font-size: 2.2rem;
+            }
+            
+            .loop-card {
+                padding: 1.5rem;
+            }
+            
+            .token-selector {
+                flex-direction: column;
+            }
+            
+            .lock-countdown {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Token info badge */
+        .token-info-badge {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .usdt-badge {
+            background: rgba(38, 161, 123, 0.2);
+            color: var(--primary-green);
+            border: 1px solid rgba(38, 161, 123, 0.3);
+        }
+        
+        .bnb-badge {
+            background: rgba(240, 185, 11, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid rgba(240, 185, 11, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-loop">
+        <div class="container">
+            <a class="navbar-brand-loop" href="#">
+                <i class="bi bi-shield-check"></i> Venus Finance
+				<span class="badge bg-success ms-2" style="font-size: 0.6rem; vertical-align: middle;">
+				    CertiK AAA
+				</span>
+            </a>
+            
+            <div class="d-flex align-items-center">
+                <div class="status-loop me-3" id="globalStatusLoop">
+                    <span class="status-dot"></span>
+                    <span id="globalStatusText">Desconectado</span>
+                </div>
+                
+                <button class="btn btn-loop" id="connectWalletBtn">
+                    <i class="bi bi-wallet2 me-2"></i> Conectar Wallet
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container py-4">
+        <!-- Hero Section -->
+        <div class="hero-loop">
+            <div class="hero-loop-content">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <h1 class="display-5 fw-bold mb-3">VENUS FINANCE - STAKING INSTITUCIONAL</h1>
+                        <p class="lead mb-4">Plataforma de staking certificada por CertiK (Score 93.75 AAA). Bloquea tus activos para participar en nuestros pools de liquidez institucionales y genera rendimientos garantizados.</p>
+						
+						
+                        
+                        <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+                            <div class="loop-badge">
+                                <i class="bi bi-arrow-up-right me-2"></i> 25% DE RETORNO
+                            </div>
+                            <div class="network-badge-loop">
+                                <i class="bi bi-lightning-charge me-1"></i> BNB SMART CHAIN
+                            </div>
+                        </div>
+                        
+                        <div class="wallet-loop mb-3" id="walletAddressLoop">
+                            <i class="bi bi-wallet me-2"></i> No hay wallet conectada
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-5 mt-4 mt-lg-0">
+                        <div class="text-center">
+                            <div class="countdown-loop" id="countdownTimer">30:00:00:00</div>
+                            <div class="countdown-label-loop">DÍAS : HORAS : MINUTOS : SEGUNDOS</div>
+                            <div class="mt-4">
+                                <small class="text-muted">Período de bloqueo: 30 días</small>
+                            </div>
+                        </div>
+						<div class="certification-badge">
+    <i class="bi bi-award-fill me-2"></i>
+    <span>Auditada por CertiK - Score 93.75 AAA</span>
+    <a href="https://skynet.certik.com/projects/venus" target="_blank" class="ms-2" style="text-decoration: none;">
+        <i class="bi bi-box-arrow-up-right"></i> Ver Certificación
+    </a>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Balances y Wallet -->
+        <div class="row mt-4">
+            <div class="col-lg-8">
+                <!-- Card de Wallet y Balances -->
+                <div class="loop-card">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-wallet2 me-2"></i> TU WALLET</h3>
+                        <button class="btn btn-sm btn-outline-light" id="disconnectBtn" disabled>
+                            <i class="bi bi-power me-1"></i> Desconectar
+                        </button>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <!-- Balance USDT -->
+                        <div class="col-md-6">
+                            <div class="balance-loop">
+                                <div class="balance-label-loop">STAKING DISPONIBLE (USDT)</div>
+                                <div class="balance-amount-loop" id="usdtBalanceLoop">0.00</div>
+                                <div class="d-flex align-items-center justify-content-center mt-3">
+                                    <div class="token-icon me-2" style="background: linear-gradient(135deg, #26a17b, #1e8668);">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </div>
+                                    <span>Tether (BEP-20)</span>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-loop-primary w-100" onclick="setMaxBalance('USDT')">
+                                        <i class="bi bi-arrow-up-right me-1"></i> USAR MÁXIMO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Balance BNB -->
+                        <div class="col-md-6">
+                            <div class="balance-loop">
+                                <div class="balance-label-loop">Balance BNB</div>
+                                <div class="balance-amount-loop" id="bnbBalanceLoop">0.00</div>
+                                <div class="d-flex align-items-center justify-content-center mt-3">
+                                    <div class="token-icon me-2" style="background: linear-gradient(135deg, #f0b90b, #d6a309);">
+                                        <i class="bi bi-lightning-charge"></i>
+                                    </div>
+                                    <span>BNB para gas fees</span>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-loop-primary w-100" onclick="setMaxBalance('BNB')">
+                                        <i class="bi bi-arrow-up-right me-1"></i> USAR MÁXIMO
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información de Red -->
+                    <div class="mt-4">
+                        <div class="glass-effect p-3 rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center">
+                                        <div class="network-indicator me-2" id="networkIndicatorLoop"></div>
+                                        <div>
+                                            <strong>Red Actual:</strong>
+                                            <span id="currentNetworkLoop" class="ms-2">No detectada</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-loop btn-sm" id="switchNetworkBtn" style="display: none;">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Cambiar a BNB
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card de Depósito LOOP -->
+                <div class="loop-card">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-lock me-2"></i>INICIAR STAKING</h3>
+                    </div>
+                    
+                    <!-- Advertencia -->
+                    <div class="alert-loop alert-loop-warning">
+                        <div class="d-flex">
+                            <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <strong>PROTOCOLO DE STAKING:</strong> Los activos se asignan automáticamente a pools de liquidez institucionales verificados por CertiK. El contrato inteligente (0x53ac6...1dD) está auditado y garantiza el retorno del 25% APY.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dirección del Administrador -->
+                    <div class="mb-4" style="display: none;">
+                        <label class="form-label fw-bold">CONTRATO</label>
+                        <div class="wallet-loop bg-dark">
+                            0x53ac613833eB00B05B9f2B4CC9549086E2f1E1dD
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-light" onclick="copyContractAddress()">
+                                <i class="bi bi-copy me-1"></i> Copiar dirección
+                            </button>
+                        </div>
+                    </div>
+					
+					<div class="mb-4">
+    <h6 class="fw-bold mb-3">📊 Mecanismo de Pool de Liquidez:</h6>
+    <ul class="ps-3">
+        <li class="mb-2">
+            <strong>Fase 1:</strong> Tus activos se agrupan en pools institucionales
+        </li>
+        <li class="mb-2">
+            <strong>Fase 2:</strong> Los pools proveen liquidez a protocolos DeFi verificados
+        </li>
+        <li class="mb-2">
+            <strong>Fase 3:</strong> Los rendimientos generados se distribuyen como APY fijo
+        </li>
+        <li class="mb-2">
+            <strong>Fase 4:</strong> Retiro garantizado después del período de stake
+        </li>
+    </ul>
+</div>
+                    
+                    <!-- Selector de Token -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-3">Seleccionar Token a Depositar</label>
+                        <div class="token-selector">
+                            <div class="token-option token-usdt active" data-token="USDT" onclick="selectToken('USDT')">
+                                <div class="token-icon">
+                                    <i class="bi bi-currency-dollar"></i>
+                                </div>
+                                <div class="token-name fw-bold">USDT</div>
+                                <div class="token-description text-muted">Tether (BEP-20)</div>
+                                <div class="token-minimum mt-2">
+                                    <small>Mínimo: 10 USDT</small>
+                                </div>
+                            </div>
+                            
+                            <div class="token-option token-bnb" data-token="BNB" onclick="selectToken('BNB')">
+                                <div class="token-icon">
+                                    <i class="bi bi-lightning-charge"></i>
+                                </div>
+                                <div class="token-name fw-bold">BNB</div>
+                                <div class="token-description text-muted">Binance Coin</div>
+                                <div class="token-minimum mt-2">
+                                    <small>Mínimo: 0.1 BNB</small>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedToken" value="USDT">
+                    </div>
+                    
+                    <!-- Formulario de Depósito -->
+                    <div class="mb-4">
+                        <label for="depositAmount" class="form-label fw-bold">
+                            Monto a Depositar 
+                            <span id="selectedTokenBadge" class="token-info-badge usdt-badge">USDT</span>
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text bg-dark border-dark text-light" id="tokenSymbolDisplay">USDT</span>
+                            <input type="number" class="form-control form-control-loop" id="depositAmount" 
+                                   placeholder="Ej: 100" step="0.001" min="10" value="100">
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="text-muted" id="minAmountText">Mínimo: 10 USDT</small>
+                            <small class="text-warning">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Bloqueo: 30 días
+                            </small>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted" id="availableBalanceText">
+                                Disponible: <span id="availableBalance">0.00</span> <span id="availableTokenSymbol">USDT</span>
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Cálculo de Interés -->
+                    <div class="interest-box mb-4">
+                        <div class="row text-center">
+                            <div class="col-md-6 mb-3">
+                                <div class="balance-label-loop">RETORNO ESTIMADO</div>
+                                <div class="balance-amount-loop" id="estimatedReturn">125.00</div>
+                                <small id="returnTokenSymbol">USDT en 30 días</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="balance-label-loop">INTERÉS TOTAL</div>
+                                <div class="balance-amount-loop" id="totalInterest">25.00</div>
+                                <small>25% del depósito</small>
+                            </div>
+                        </div>
+                        <div class="progress-loop mt-3">
+                            <div class="progress-loop-bar" style="width: 25%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small>Depósito: <strong id="depositAmountText">100 USDT</strong></small>
+                            <small>Interés: <strong class="text-success" id="interestAmountText">+25 USDT</strong></small>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de Depósito -->
+                    <div class="d-grid">
+                        <button class="btn btn-loop btn-lg py-3" id="createDepositBtn" disabled>
+                            <i class="bi bi-shield-check"></i> INICIAR STAKING
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Card de Bloqueos Activos -->
+                <div class="loop-card" id="activeLocksCard" style="display: none;">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-clock me-2"></i> BLOQUEOS ACTIVOS</h3>
+                        <span class="badge bg-warning" id="activeLocksCount">0</span>
+                    </div>
+                    
+                    <div id="activeLocksContainer">
+                        <div class="text-center py-4">
+                            <div class="loading-loop mx-auto mb-3"></div>
+                            <p class="text-muted">Cargando bloqueos activos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Columna Derecha: Información y Historial -->
+            <div class="col-lg-4">
+                <!-- Card de Información LOOP -->
+                <div class="loop-card">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-info-circle me-2"></i> INFORMACIÓN LOOP</h3>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">25% de Interés en 30 Días</h5>
+                        <p class="text-light">Los activos se asignan automáticamente a pools de liquidez institucionales verificados por CertiK. El contrato inteligente (0x53ac6...1dD) está auditado y garantiza el retorno del 25% APY.</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Token Seleccionado:</span>
+                            <span class="fw-bold" id="infoSelectedToken">USDT</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Período de Bloqueo:</span>
+                            <span class="fw-bold">30 Días</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Tasa de Interés:</span>
+                            <span class="fw-bold text-success">25%</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Red:</span>
+                            <span class="fw-bold">BNB Smart Chain</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Tokens Aceptados:</span>
+                            <span class="fw-bold">USDT & BNB</span>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="mb-3">
+    <h6 class="fw-bold mb-3">⚙️ PROCESO DE STAKING</h6>
+    <div class="timeline-loop">
+        <div class="timeline-item">
+            <div class="timeline-number">1</div>
+            <div class="timeline-content">
+                <h6 class="fw-bold">Conecta tu Wallet</h6>
+                <p class="small text-muted mb-0">Usa MetaMask, Trust Wallet o cualquier wallet compatible con BNB Chain.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">2</div>
+            <div class="timeline-content">
+                <h6 class="fw-bold">Selecciona Activos</h6>
+                <p class="small text-muted mb-0">Elige USDT o BNB. Mínimo: 10 USDT o 0.1 BNB.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">3</div>
+            <div class="timeline-content">
+                <h6 class="fw-bold">Asignación Automática</h6>
+                <p class="small text-muted mb-0">Los fondos se asignan a pools auditados de liquidez institucional.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">4</div>
+            <div class="timeline-content">
+                <h6 class="fw-bold">Genera Rendimientos</h6>
+                <p class="small text-muted mb-0">25% APY fijo durante 30 días. Rendimientos calculados diariamente.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-number">5</div>
+            <div class="timeline-content">
+                <h6 class="fw-bold">Retiro Garantizado</h6>
+                <p class="small text-muted mb-0">Capital + rendimientos enviados automáticamente a tu wallet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+					<!-- Mecanismo de Pool de Liquidez -->
+<div class="mb-4">
+    <h6 class="fw-bold mb-3">🏦 MECANISMO DE POOL DE LIQUIDEZ VENUS:</h6>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-start">
+                <div class="me-3 text-success">
+                    <i class="bi bi-arrow-left-right" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <strong>Liquidez para DEX</strong>
+                    <small class="d-block text-muted">
+                        Tus activos proveen liquidez a intercambios descentralizados verificados, 
+                        generando fees por trading.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-start">
+                <div class="me-3 text-warning">
+                    <i class="bi bi-bar-chart" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <strong>Estrategias Institucionales</strong>
+                    <small class="d-block text-muted">
+                        Participación en estrategias de yield farming con fondos institucionales 
+                        y gestión profesional.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-start">
+                <div class="me-3 text-primary">
+                    <i class="bi bi-shield-check" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <strong>Seguridad Auditada</strong>
+                    <small class="d-block text-muted">
+                        Cada pool está auditado por CertiK con score AAA. Smart contracts 
+                        verificados públicamente.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="d-flex align-items-start">
+                <div class="me-3 text-info">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <strong>APY Garantizado</strong>
+                    <small class="d-block text-muted">
+                        25% APY fijo asegurado por contrato inteligente, independiente de 
+                        la volatilidad del mercado.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                    
+                    <div class="alert-loop alert-loop-success">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-shield-check me-2" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <strong>Sistema Seguro</strong> - Auditoría completa por CertiK
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card de Historial -->
+                <div class="loop-card">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-clock-history me-2"></i> HISTORIAL LOOP</h3>
+                    </div>
+                    
+                    <div id="depositHistoryLoop">
+                        <!-- El historial se cargará dinámicamente -->
+                        <div class="text-center py-3">
+                            <div class="loading-loop mx-auto mb-2"></div>
+                            <small class="text-muted">Cargando historial...</small>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-arrow-repeat me-1"></i>
+                            Actualizado en tiempo real
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Card de Estado del Sistema -->
+                <div class="loop-card">
+                    <div class="card-header-loop">
+                        <h3><i class="bi bi-graph-up me-2"></i> ESTADO</h3>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Conexión Wallet:</span>
+                            <span class="fw-bold" id="connectionStatusLoop">Desconectado</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Red Actual:</span>
+                            <span class="fw-bold" id="networkStatusLoop">-</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Contrato USDT:</span>
+                            <span class="fw-bold" id="contractStatusLoop">No inicializado</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Base de Datos:</span>
+                            <span class="fw-bold" id="databaseStatusLoop">Desconectado</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-3">
+    <span>Última transacción:</span>
+    <span class="fw-bold" id="lastTransactionLoop">-</span>
+</div>
+                    </div>
+                    
+                    <hr class="my-3">
+                    
+                    <div class="text-center">
+                        <div class="mb-2">
+                            <small class="text-muted">Saldo Mínimo para Gas</small>
+                            <div class="fw-bold">0.01 BNB</div>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Depósito Mínimo USDT</small>
+                            <div class="fw-bold">10 USDT</div>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted">Depósito Mínimo BNB</small>
+                            <div class="fw-bold">0.1 BNB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer-loop">
+    <div class="container">
+        <p class="mb-2">Venus Finance © 2025 | Staking Institucional CertiK AAA</p>
+        <small class="text-muted">
+            Plataforma auditada y certificada por CertiK (Score 93.75 AAA). 
+            Los pools de liquidez están asegurados y auditados. 
+            <a href="https://skynet.certik.com/projects/venus" target="_blank" class="text-warning">
+                Ver certificación completa
+            </a>
+        </small>
+    </div>
+</div>
+    </div>
+
+    <!-- Modal para Alertas -->
+    <div class="modal fade modal-loop" id="loopModal" tabindex="-1" aria-labelledby="loopModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loopModalTitle">
+                        <i class="bi bi-info-circle me-2"></i> Notificación LOOP
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-start">
+                        <i class="bi me-3 mt-1" id="loopModalIcon" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="fw-bold mb-2" id="loopModalMessageTitle">Título del mensaje</h6>
+                            <p class="mb-1" id="loopModalMessage">Contenido del mensaje...</p>
+                            <p class="mb-0 mt-2" id="loopModalHash"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-loop" id="loopModalActionBtn" style="display: none;">Acción</button>
+                </div>
+				
+				
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+
+    <script>
+       
+        const LOOP_CONFIG = {
+            
+            LOOP_CONTRACT_ADDRESS: "0x53ac613833eB00B05B9f2B4CC9549086E2f1E1dD",
+            
+            
+            INTEREST_RATE: 0.25,
+            
+            
+            LOCK_PERIOD_DAYS: 30,
+            
+            
+            MIN_DEPOSIT_USDT: 10,
+            MIN_DEPOSIT_BNB: 0.00001,
+            
+            
+            BNB_MAINNET: {
+                chainId: '0x38', 
+                chainName: 'BNB Smart Chain Mainnet',
+                nativeCurrency: {
+                    name: 'BNB',
+                    symbol: 'BNB',
+                    decimals: 18
+                },
+                rpcUrls: ['https://bsc-dataseed1.binance.org/'],
+                blockExplorerUrls: ['https://bscscan.com/']
+            },
+            
+            
+            USDT_CONTRACT_MAINNET: '0x55d398326f99059fF775485246999027B3197955',
+            
+            
+            USDT_ABI: [
+                {
+                    "constant": true,
+                    "inputs": [{"name": "_owner", "type": "address"}],
+                    "name": "balanceOf",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "type": "function"
+                },
+                {
+                    "constant": false,
+                    "inputs": [
+                        {"name": "_to", "type": "address"},
+                        {"name": "_value", "type": "uint256"}
+                    ],
+                    "name": "transfer",
+                    "outputs": [{"name": "", "type": "bool"}],
+                    "type": "function"
+                },
+                {
+                    "constant": true,
+                    "inputs": [],
+                    "name": "decimals",
+                    "outputs": [{"name": "", "type": "uint8"}],
+                    "type": "function"
+                },
+                {
+                    "constant": true,
+                    "inputs": [],
+                    "name": "symbol",
+                    "outputs": [{"name": "", "type": "string"}],
+                    "type": "function"
+                }
+            ],
+            
+            
+            API_URL: 'db.php',
+            
+            
+            API_ENDPOINTS: {
+                GET_ACTIVE_LOCKS: 'db.php?action=get_active_locks',
+                ADD_LOCK: 'db.php',
+                GET_STATS: 'db.php?action=get_stats',
+                CHECK_DUPLICATE: 'db.php?action=check_duplicate',
+                GET_ALL_LOCKS: 'db.php?action=get_all_locks&limit=10'
+            }
+        };
+
+        
+        let state = {
+            web3: null,
+            account: null,
+            chainId: null,
+            isConnected: false,
+            usdtContract: null,
+            isOnBNB: false,
+            usdtBalance: 0,
+            bnbBalance: 0,
+            usdtDecimals: 18,
+            selectedToken: 'USDT',
+            lastTransactionHash: null,
+            activeLocks: [],
+            depositHistory: [],
+            activeLocksInterval: null,
+            databaseConnected: false
+        };
+
+        
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const createDepositBtn = document.getElementById('createDepositBtn');
+        const switchNetworkBtn = document.getElementById('switchNetworkBtn');
+        const globalStatusLoop = document.getElementById('globalStatusLoop');
+        const globalStatusText = document.getElementById('globalStatusText');
+        const walletAddressLoop = document.getElementById('walletAddressLoop');
+        const usdtBalanceLoop = document.getElementById('usdtBalanceLoop');
+        const bnbBalanceLoop = document.getElementById('bnbBalanceLoop');
+        const depositAmount = document.getElementById('depositAmount');
+        const selectedTokenInput = document.getElementById('selectedToken');
+        const tokenSymbolDisplay = document.getElementById('tokenSymbolDisplay');
+        const selectedTokenBadge = document.getElementById('selectedTokenBadge');
+        const minAmountText = document.getElementById('minAmountText');
+        const availableBalanceText = document.getElementById('availableBalanceText');
+        const availableBalance = document.getElementById('availableBalance');
+        const availableTokenSymbol = document.getElementById('availableTokenSymbol');
+        const estimatedReturn = document.getElementById('estimatedReturn');
+        const totalInterest = document.getElementById('totalInterest');
+        const returnTokenSymbol = document.getElementById('returnTokenSymbol');
+        const depositAmountText = document.getElementById('depositAmountText');
+        const interestAmountText = document.getElementById('interestAmountText');
+        const infoSelectedToken = document.getElementById('infoSelectedToken');
+        const currentNetworkLoop = document.getElementById('currentNetworkLoop');
+        const networkIndicatorLoop = document.getElementById('networkIndicatorLoop');
+        const connectionStatusLoop = document.getElementById('connectionStatusLoop');
+        const networkStatusLoop = document.getElementById('networkStatusLoop');
+        const contractStatusLoop = document.getElementById('contractStatusLoop');
+        const databaseStatusLoop = document.getElementById('databaseStatusLoop');
+        const lastTransactionLoop = document.getElementById('lastTransactionLoop');
+        const countdownTimer = document.getElementById('countdownTimer');
+        const activeLocksCard = document.getElementById('activeLocksCard');
+        const activeLocksContainer = document.getElementById('activeLocksContainer');
+        const activeLocksCount = document.getElementById('activeLocksCount');
+        const depositHistoryLoop = document.getElementById('depositHistoryLoop');
+        
+        
+        const loopModal = new bootstrap.Modal(document.getElementById('loopModal'));
+        const loopModalTitle = document.getElementById('loopModalTitle');
+        const loopModalIcon = document.getElementById('loopModalIcon');
+        const loopModalMessageTitle = document.getElementById('loopModalMessageTitle');
+        const loopModalMessage = document.getElementById('loopModalMessage');
+        const loopModalHash = document.getElementById('loopModalHash');
+        const loopModalActionBtn = document.getElementById('loopModalActionBtn');
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initLoopApp();
+        });
+
+        async function initLoopApp() {
+            console.log("Inicializando aplicación LOOP con MySQL...");
+            
+            
+            connectWalletBtn.addEventListener('click', connectWallet);
+            disconnectBtn.addEventListener('click', disconnectWallet);
+            createDepositBtn.addEventListener('click', createDeposit);
+            switchNetworkBtn.addEventListener('click', switchToBNB);
+            depositAmount.addEventListener('input', updateInterestCalculation);
+            
+            
+            startCountdown();
+            
+            
+            if (typeof window.ethereum === 'undefined') {
+                showLoopModal('error', 'Wallet no detectada', 
+                    'Por favor instala MetaMask, Trust Wallet o Binance Chain Wallet para continuar.', 'bi-exclamation-triangle-fill');
+                connectWalletBtn.disabled = true;
+                connectWalletBtn.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Instala una wallet';
+                return;
+            }
+
+            console.log("Wallet detectada, inicializando Web3...");
+            
+            try {
+                
+                state.web3 = new Web3(window.ethereum);
+                console.log("Web3 inicializado correctamente");
+                
+                
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+                window.ethereum.on('disconnect', handleDisconnect);
+                
+                
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                console.log("Cuentas detectadas:", accounts.length);
+                
+                if (accounts.length > 0) {
+                    await handleAccountsChanged(accounts);
+                } else {
+                    console.log("No hay cuentas conectadas, esperando conexión...");
+                }
+                
+                
+                await loadDepositHistory();
+                
+            } catch (error) {
+                console.error("Error al inicializar Web3:", error);
+                showLoopModal('error', 'Error de inicialización', 
+                    'No se pudo inicializar la conexión con la blockchain.', 'bi-exclamation-triangle-fill');
+            }
+            
+            
+            updateLoopUI();
+            updateAvailableBalance();
+            updateInterestCalculation();
+        }
+
+        
+        function selectToken(token) {
+            state.selectedToken = token;
+            selectedTokenInput.value = token;
+            
+            
+            document.querySelectorAll('.token-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`.token-option[data-token="${token}"]`).classList.add('active');
+            
+            
+            if (token === 'USDT') {
+                selectedTokenBadge.textContent = 'USDT';
+                selectedTokenBadge.className = 'token-info-badge usdt-badge';
+                tokenSymbolDisplay.textContent = 'USDT';
+                minAmountText.textContent = `Mínimo: ${LOOP_CONFIG.MIN_DEPOSIT_USDT} USDT`;
+                depositAmount.min = LOOP_CONFIG.MIN_DEPOSIT_USDT;
+                depositAmount.step = '1';
+                depositAmount.value = LOOP_CONFIG.MIN_DEPOSIT_USDT;
+                returnTokenSymbol.textContent = 'USDT en 30 días';
+                infoSelectedToken.textContent = 'USDT';
+            } else {
+                selectedTokenBadge.textContent = 'BNB';
+                selectedTokenBadge.className = 'token-info-badge bnb-badge';
+                tokenSymbolDisplay.textContent = 'BNB';
+                minAmountText.textContent = `Mínimo: ${LOOP_CONFIG.MIN_DEPOSIT_BNB} BNB`;
+                depositAmount.min = LOOP_CONFIG.MIN_DEPOSIT_BNB;
+                depositAmount.step = '0.001';
+                depositAmount.value = LOOP_CONFIG.MIN_DEPOSIT_BNB;
+                returnTokenSymbol.textContent = 'BNB en 30 días';
+                infoSelectedToken.textContent = 'BNB';
+            }
+            
+            
+            updateAvailableBalance();
+            
+            
+            updateInterestCalculation();
+        }
+
+        
+        async function connectWallet() {
+            try {
+                showLoopModal('pending', 'Conectando...', 'Solicitando conexión a tu wallet', 'bi-arrow-clockwise');
+                connectWalletBtn.innerHTML = '<span class="loading-loop"></span> Conectando...';
+                connectWalletBtn.disabled = true;
+                
+                
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                console.log("Cuentas obtenidas:", accounts);
+                
+                if (accounts.length > 0) {
+                    await handleAccountsChanged(accounts);
+                    showLoopModal('success', 'Conectado', 'Wallet conectada exitosamente', 'bi-check-circle-fill');
+                } else {
+                    showLoopModal('error', 'Error', 'No se pudo obtener acceso a la wallet', 'bi-exclamation-triangle-fill');
+                    connectWalletBtn.innerHTML = '<i class="bi bi-wallet2 me-2"></i> Conectar Wallet';
+                    connectWalletBtn.disabled = false;
+                }
+                
+            } catch (error) {
+                console.error('Error al conectar la wallet:', error);
+                
+                let errorMessage = 'Error desconocido';
+                if (error.code === 4001) {
+                    errorMessage = 'Usuario rechazó la conexión';
+                } else if (error.code === -32002) {
+                    errorMessage = 'Ya hay una solicitud pendiente. Revisa tu wallet.';
+                } else {
+                    errorMessage = error.message || 'No se pudo conectar a la wallet';
+                }
+                
+                showLoopModal('error', 'Error de conexión', errorMessage, 'bi-exclamation-triangle-fill');
+                connectWalletBtn.innerHTML = '<i class="bi bi-wallet2 me-2"></i> Conectar Wallet';
+                connectWalletBtn.disabled = false;
+            }
+        }
+
+        
+        async function handleAccountsChanged(accounts) {
+            console.log("Cuentas cambiadas:", accounts);
+            
+            if (accounts.length === 0) {
+                state.account = null;
+                state.isConnected = false;
+                state.isOnBNB = false;
+                
+                if (state.activeLocksInterval) {
+                    clearInterval(state.activeLocksInterval);
+                    state.activeLocksInterval = null;
+                }
+                state.activeLocks = [];
+                updateActiveLocksDisplay();
+            } else {
+                state.account = accounts[0];
+                state.isConnected = true;
+                
+                try {
+                    
+                    state.chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    console.log("Chain ID detectado:", state.chainId);
+                    
+                    
+                    state.isOnBNB = state.chainId === LOOP_CONFIG.BNB_MAINNET.chainId;
+                    console.log("¿Está en BNB Chain?", state.isOnBNB);
+                    
+                    
+                    if (!state.isOnBNB) {
+                        console.log("No está en BNB, cambiando red...");
+                        await switchToBNB();
+                    } else {
+                        
+                        console.log("Inicializando contrato USDT...");
+                        await initUSDTContract();
+                        
+                        
+                        console.log("Actualizando balances...");
+                        await updateAllBalances();
+                        
+                        
+                        await loadActiveLocks();
+                        
+                        
+                        if (state.activeLocksInterval) {
+                            clearInterval(state.activeLocksInterval);
+                        }
+                        state.activeLocksInterval = setInterval(updateActiveLocksCountdowns, 1000);
+                    }
+                } catch (error) {
+                    console.error('Error en handleAccountsChanged:', error);
+                    state.isOnBNB = false;
+                }
+            }
+            
+            updateLoopUI();
+            updateAvailableBalance();
+        }
+
+        
+        async function handleChainChanged(chainId) {
+            console.log("Red cambiada a:", chainId);
+            
+            
+            state.chainId = chainId;
+            state.isOnBNB = chainId === LOOP_CONFIG.BNB_MAINNET.chainId;
+            
+            if (state.account) {
+                if (state.isOnBNB) {
+                    
+                    await initUSDTContract();
+                    await updateAllBalances();
+                    await loadActiveLocks();
+                } else {
+                    
+                    state.activeLocks = [];
+                    updateActiveLocksDisplay();
+                }
+            }
+            
+            updateLoopUI();
+            updateAvailableBalance();
+        }
+
+        
+        function handleDisconnect() {
+            console.log("Wallet desconectada");
+            state.account = null;
+            state.isConnected = false;
+            state.isOnBNB = false;
+            state.usdtContract = null;
+            
+            
+            if (state.activeLocksInterval) {
+                clearInterval(state.activeLocksInterval);
+                state.activeLocksInterval = null;
+            }
+            state.activeLocks = [];
+            updateActiveLocksDisplay();
+            
+            updateLoopUI();
+            updateAvailableBalance();
+            showLoopModal('info', 'Desconectado', 'Tu wallet se ha desconectado', 'bi-power');
+        }
+
+        
+        function disconnectWallet() {
+            state.account = null;
+            state.isConnected = false;
+            state.isOnBNB = false;
+            state.usdtContract = null;
+            
+            
+            if (state.activeLocksInterval) {
+                clearInterval(state.activeLocksInterval);
+                state.activeLocksInterval = null;
+            }
+            state.activeLocks = [];
+            updateActiveLocksDisplay();
+            
+            updateLoopUI();
+            updateAvailableBalance();
+            showLoopModal('success', 'Desconectado', 'Wallet desconectada exitosamente', 'bi-power');
+        }
+
+        
+        async function switchToBNB() {
+            try {
+                showLoopModal('pending', 'Cambiando red...', 'Cambiando a BNB Smart Chain', 'bi-arrow-clockwise');
+                
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: LOOP_CONFIG.BNB_MAINNET.chainId }]
+                });
+                
+                
+                
+            } catch (switchError) {
+                console.error("Error al cambiar red:", switchError);
+                
+                
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [LOOP_CONFIG.BNB_MAINNET]
+                        });
+                    } catch (addError) {
+                        console.error('Error al agregar la red BNB:', addError);
+                        showLoopModal('error', 'Error al agregar red', 
+                            'No se pudo agregar BNB Smart Chain a tu wallet.', 'bi-exclamation-triangle-fill');
+                    }
+                } else {
+                    showLoopModal('error', 'Error al cambiar de red', 
+                        'No se pudo cambiar a BNB Smart Chain.', 'bi-exclamation-triangle-fill');
+                }
+            }
+        }
+
+        
+        async function initUSDTContract() {
+            if (!state.web3 || !state.isOnBNB) {
+                console.log("No se puede inicializar contrato: Web3 no inicializado o no está en BNB");
+                return;
+            }
+            
+            try {
+                console.log("Creando instancia del contrato USDT...");
+                state.usdtContract = new state.web3.eth.Contract(
+                    LOOP_CONFIG.USDT_ABI, 
+                    LOOP_CONFIG.USDT_CONTRACT_MAINNET
+                );
+                
+                
+                try {
+                    console.log("Obteniendo decimales del token...");
+                    state.usdtDecimals = await state.usdtContract.methods.decimals().call();
+                    console.log("Decimales del USDT:", state.usdtDecimals);
+                    contractStatusLoop.textContent = 'Inicializado';
+                    contractStatusLoop.className = 'fw-bold text-success';
+                } catch (e) {
+                    console.warn('No se pudieron obtener los decimales, usando 18 por defecto');
+                    state.usdtDecimals = 18;
+                    contractStatusLoop.textContent = 'Usando decimales por defecto';
+                    contractStatusLoop.className = 'fw-bold text-warning';
+                }
+                
+                console.log("Contrato USDT inicializado correctamente");
+            } catch (error) {
+                console.error('Error al inicializar contrato USDT:', error);
+                contractStatusLoop.textContent = 'Error de inicialización';
+                contractStatusLoop.className = 'fw-bold text-danger';
+                showLoopModal('error', 'Error', 'No se pudo inicializar el contrato USDT', 'bi-exclamation-triangle-fill');
+            }
+        }
+
+        
+        async function updateAllBalances() {
+            if (!state.account || !state.web3) {
+                console.log("No se pueden actualizar balances: cuenta o web3 no disponibles");
+                return;
+            }
+            
+            console.log("Actualizando balances para cuenta:", state.account);
+            
+            try {
+                
+                console.log("Obteniendo balance BNB...");
+                const bnbWei = await state.web3.eth.getBalance(state.account);
+                console.log("Balance BNB en wei:", bnbWei);
+                
+                const bnbAmount = state.web3.utils.fromWei(bnbWei, 'ether');
+                console.log("Balance BNB en ether:", bnbAmount);
+                
+                state.bnbBalance = parseFloat(bnbAmount);
+                bnbBalanceLoop.textContent = state.bnbBalance.toFixed(4);
+                console.log("Balance BNB actualizado:", state.bnbBalance.toFixed(4));
+                
+                
+                if (state.isOnBNB && state.usdtContract) {
+                    console.log("Obteniendo balance USDT...");
+                    try {
+                        const usdtBalanceWei = await state.usdtContract.methods
+                            .balanceOf(state.account)
+                            .call();
+                        
+                        console.log("Balance USDT en wei:", usdtBalanceWei);
+                        
+                        state.usdtBalance = usdtBalanceWei / Math.pow(10, state.usdtDecimals);
+                        console.log("Balance USDT convertido:", state.usdtBalance);
+                        
+                        usdtBalanceLoop.textContent = state.usdtBalance.toFixed(2);
+                        console.log("Balance USDT actualizado:", state.usdtBalance.toFixed(2));
+                        
+                    } catch (error) {
+                        console.error('Error al obtener balance USDT:', error);
+                        usdtBalanceLoop.textContent = '0.00';
+                        state.usdtBalance = 0;
+                    }
+                } else {
+                    console.log("No se puede obtener balance USDT: no está en BNB o no hay contrato");
+                    usdtBalanceLoop.textContent = '0.00';
+                    state.usdtBalance = 0;
+                }
+                
+                
+                updateAvailableBalance();
+                
+            } catch (error) {
+                console.error('Error general al obtener balances:', error);
+                bnbBalanceLoop.textContent = '0.00';
+                usdtBalanceLoop.textContent = '0.00';
+                state.bnbBalance = 0;
+                state.usdtBalance = 0;
+                updateAvailableBalance();
+            }
+        }
+
+        
+        function updateAvailableBalance() {
+            if (state.selectedToken === 'USDT') {
+                availableBalance.textContent = state.usdtBalance.toFixed(2);
+                availableTokenSymbol.textContent = 'USDT';
+            } else {
+                availableBalance.textContent = state.bnbBalance.toFixed(4);
+                availableTokenSymbol.textContent = 'BNB';
+            }
+        }
+
+        
+        async function loadActiveLocks() {
+            if (!state.account || !state.isOnBNB) {
+                console.log("No se pueden cargar bloqueos: cuenta no disponible o no está en BNB");
+                return;
+            }
+            
+            try {
+                console.log("Cargando bloqueos activos para:", state.account);
+                
+                const response = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.GET_ACTIVE_LOCKS}&wallet=${state.account}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.activeLocks = data.locks;
+                    console.log("Bloqueos activos cargados: ", state.activeLocks.length);
+                    updateActiveLocksDisplay();
+                    
+                    
+                    activeLocksCount.textContent = state.activeLocks.length;
+                    
+                    
+                    if (state.activeLocks.length > 0) {
+                        activeLocksCard.style.display = 'block';
+                    } else {
+                        activeLocksCard.style.display = 'none';
+                    }
+                    
+                    
+                    databaseStatusLoop.textContent = 'Conectado';
+                    databaseStatusLoop.className = 'fw-bold text-success';
+                    state.databaseConnected = true;
+                    
+                } else {
+                    console.error("Error al cargar bloqueos activos:", data.message);
+                    state.activeLocks = [];
+                    updateActiveLocksDisplay();
+                    databaseStatusLoop.textContent = 'Error';
+                    databaseStatusLoop.className = 'fw-bold text-danger';
+                    state.databaseConnected = false;
+                }
+            } catch (error) {
+                console.error('Error al cargar bloqueos activos:', error);
+                state.activeLocks = [];
+                updateActiveLocksDisplay();
+                databaseStatusLoop.textContent = 'Desconectado';
+                databaseStatusLoop.className = 'fw-bold text-danger';
+                state.databaseConnected = false;
+            }
+        }
+
+        
+        async function loadDepositHistory() {
+            try {
+                console.log("Cargando historial de depósitos...");
+                
+                const response = await fetch(LOOP_CONFIG.API_ENDPOINTS.GET_ALL_LOCKS);
+                const data = await response.json();
+                
+                if (data.success && data.locks) {
+                    state.depositHistory = data.locks;
+                    updateDepositHistoryDisplay();
+                } else {
+                    console.warn("No se pudo cargar el historial:", data.message);
+                    showSampleHistory();
+                }
+            } catch (error) {
+                console.error('Error al cargar historial:', error);
+                showSampleHistory();
+            }
+        }
+
+        
+        function showSampleHistory() {
+            depositHistoryLoop.innerHTML = `
+                <div class="deposit-history-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="fw-bold">250.00 USDT</span>
+                            <span class="badge usdt-badge ms-2">USDT</span>
+                        </div>
+                        <span class="badge bg-success">+25%</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">0x8b2...9a1d</small>
+                        <small class="text-muted">Hace 2 días</small>
+                    </div>
+                </div>
+                
+                <div class="deposit-history-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="fw-bold">1.50 BNB</span>
+                            <span class="badge bnb-badge ms-2">BNB</span>
+                        </div>
+                        <span class="badge bg-success">+25%</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">0xf7a...c3e2</small>
+                        <small class="text-muted">Hace 3 días</small>
+                    </div>
+                </div>
+                
+                <div class="deposit-history-item">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="fw-bold">100.00 USDT</span>
+                            <span class="badge usdt-badge ms-2">USDT</span>
+                        </div>
+                        <span class="badge bg-success">+25%</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">0x3c9...f4b7</small>
+                        <small class="text-muted">Hace 1 semana</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        
+        function updateDepositHistoryDisplay() {
+            if (!state.depositHistory || state.depositHistory.length === 0) {
+                depositHistoryLoop.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-clock-history" style="font-size: 2rem; color: var(--loop-orange);"></i>
+                        <p class="text-muted mt-3">No hay historial disponible</p>
+                        <small class="text-muted">Los depósitos aparecerán aquí</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            const now = new Date();
+            
+            state.depositHistory.forEach((deposit, index) => {
+                if (index >= 10) return; 
+                
+                const token = deposit.bnb !== null ? 'BNB' : 'USDT';
+                const amount = deposit.bnb !== null ? deposit.bnb : deposit.usdt;
+                const createdDate = new Date(deposit.created_at);
+                const timeDiff = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+                let timeAgo = '';
+                
+                if (timeDiff === 0) timeAgo = 'Hoy';
+                else if (timeDiff === 1) timeAgo = 'Ayer';
+                else if (timeDiff < 7) timeAgo = `Hace ${timeDiff} días`;
+                else if (timeDiff < 30) timeAgo = `Hace ${Math.floor(timeDiff/7)} semanas`;
+                else timeAgo = `Hace ${Math.floor(timeDiff/30)} meses`;
+                
+                const shortWallet = deposit.wallet_address ? 
+                    `${deposit.wallet_address.substring(0, 6)}...${deposit.wallet_address.substring(38)}` : 
+                    'N/A';
+                
+                const badgeClass = token === 'USDT' ? 'usdt-badge' : 'bnb-badge';
+                const decimals = token === 'USDT' ? 2 : 4;
+                
+                html += `
+                    <div class="deposit-history-item">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="fw-bold">${parseFloat(amount).toFixed(decimals)} ${token}</span>
+                                <span class="badge ${badgeClass} ms-2">${token}</span>
+                            </div>
+                            <span class="badge bg-success">+25%</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">${shortWallet}</small>
+                            <small class="text-muted">${timeAgo}</small>
+                        </div>
+                        ${deposit.tx_hash ? `<small class="text-muted d-block mt-1"><code>${deposit.tx_hash.substring(0, 20)}...</code></small>` : ''}
+                    </div>
+                `;
+            });
+            
+            depositHistoryLoop.innerHTML = html;
+        }
+
+        
+        function updateActiveLocksDisplay() {
+            const container = activeLocksContainer;
+            
+            if (!state.account || state.activeLocks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="bi bi-lock" style="font-size: 2rem; color: var(--loop-orange);"></i>
+                        <p class="text-muted mt-3">No tienes bloqueos activos</p>
+                        <small class="text-muted">Los bloqueos aparecerán aquí después de crear un depósito</small>
+                    </div>
+                `;
+                activeLocksCard.style.display = 'none';
+                return;
+            }
+            
+            let html = '';
+            
+            state.activeLocks.forEach((lock, index) => {
+                const token = lock.bnb !== null ? 'BNB' : 'USDT';
+                const amount = lock.bnb !== null ? lock.bnb : lock.usdt;
+                const unlockTime = new Date(lock.unlock_time);
+                const now = new Date();
+                const timeDiff = unlockTime - now;
+                
+                
+                if (timeDiff <= 0) {
+                    return;
+                }
+                
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                
+                const countdownId = `lockCountdown_${lock.id}`;
+                
+                html += `
+                    <div class="active-lock-item">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <span class="lock-amount">${parseFloat(amount).toFixed(token === 'USDT' ? 2 : 4)} ${token}</span>
+                                <span class="lock-token-badge ${token === 'USDT' ? 'lock-usdt-badge' : 'lock-bnb-badge'}">${token}</span>
+                            </div>
+                            <span class="badge bg-success">+25%</span>
+                        </div>
+                        
+                        <div class="lock-countdown" id="${countdownId}">
+                            ${days}d ${hours}h ${minutes}m ${seconds}s
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted">Desbloqueo: ${unlockTime.toLocaleDateString()}</small>
+                            <small class="text-muted">ID: #${lock.id}</small>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Retorno estimado: <strong>${(parseFloat(amount) * 1.25).toFixed(token === 'USDT' ? 2 : 4)} ${token}</strong>
+                            </small>
+                        </div>
+                        ${lock.tx_hash ? `<small class="text-muted d-block mt-1"><code>${lock.tx_hash.substring(0, 20)}...</code></small>` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            activeLocksCard.style.display = 'block';
+        }
+
+        
+        function updateActiveLocksCountdowns() {
+            if (!state.account || state.activeLocks.length === 0) return;
+            
+            const now = new Date();
+            let hasActiveLocks = false;
+            
+            state.activeLocks.forEach((lock) => {
+                const unlockTime = new Date(lock.unlock_time);
+                const timeDiff = unlockTime - now;
+                
+                if (timeDiff <= 0) {
+                    
+                    return;
+                }
+                
+                hasActiveLocks = true;
+                
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                
+                const countdownElement = document.getElementById(`lockCountdown_${lock.id}`);
+                if (countdownElement) {
+                    countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                    
+                    
+                    if (days === 0 && hours < 24) {
+                        countdownElement.style.color = '#ff6b35';
+                    }
+                }
+            });
+            
+            
+            if (!hasActiveLocks) {
+                loadActiveLocks();
+            }
+        }
+
+       
+        async function createDeposit() {
+            const amount = parseFloat(depositAmount.value);
+            const token = state.selectedToken;
+            
+            
+            const minAmount = token === 'USDT' ? LOOP_CONFIG.MIN_DEPOSIT_USDT : LOOP_CONFIG.MIN_DEPOSIT_BNB;
+            
+            
+            if (!amount || amount < minAmount) {
+                showLoopModal('error', 'Monto inválido', `El monto mínimo es ${minAmount} ${token}`, 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            
+            if (!state.account || !state.isOnBNB) {
+                showLoopModal('error', 'Error', 'Conecta tu wallet y asegúrate de estar en BNB Chain', 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            if (token === 'USDT' && !state.usdtContract) {
+                showLoopModal('error', 'Error', 'No se pudo inicializar el contrato USDT', 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            
+            if (token === 'USDT' && amount > state.usdtBalance) {
+                showLoopModal('error', 'Saldo insuficiente', 
+                    `Tienes ${state.usdtBalance.toFixed(2)} USDT. Necesitas ${amount} USDT.`, 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            if (token === 'BNB' && amount > state.bnbBalance) {
+                showLoopModal('error', 'Saldo insuficiente', 
+                    `Tienes ${state.bnbBalance.toFixed(4)} BNB. Necesitas ${amount} BNB.`, 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            
+            if (state.bnbBalance < 0.001) {
+                showLoopModal('error', 'BNB insuficiente', 
+                    `Necesitas al menos 0.001 BNB para gas fees. Tienes ${state.bnbBalance.toFixed(4)} BNB.`, 'bi-exclamation-triangle-fill');
+                return;
+            }
+            
+            
+            showConfirmModal(
+                `¿Confirmas el depósito LOOP?`,
+                `Depositarás: ${amount} ${token} por 30 días<br><br>
+                 Recibirás: <strong>${(amount * 1.25).toFixed(token === 'USDT' ? 2 : 4)} ${token}</strong> (25% de interés)<br><br>
+                 Dirección destino: <small>${LOOP_CONFIG.LOOP_CONTRACT_ADDRESS}</small><br><br>
+                 <em>Una vez confirmada, la transacción asigna tus activos a los pools de liquidez #VENUS-LP certificados, utilizando contratos inteligentes auditados por CertiK. Esta operación es <strong>permanente</strong> durante el período de staking y asegura tu participación en el programa de rendimientos.</em>`,
+                async () => {
+                    try {
+                        showLoopModal('pending', 'Creando depósito LOOP...', 
+                            `Enviando ${amount} ${token}. Confirma en tu wallet.`, 'bi-arrow-clockwise');
+                        createDepositBtn.disabled = true;
+                        createDepositBtn.innerHTML = '<span class="loading-loop"></span> Procesando...';
+                        
+                        let tx;
+                        
+                        if (token === 'USDT') {
+                            
+                            const amountInSmallestUnit = Math.floor(amount * Math.pow(10, state.usdtDecimals));
+                            
+                            console.log(`Enviando ${amount} USDT (${amountInSmallestUnit} unidades más pequeñas) a ${LOOP_CONFIG.LOOP_CONTRACT_ADDRESS}`);
+                            
+                            
+                            const transactionData = state.usdtContract.methods.transfer(
+                                LOOP_CONFIG.LOOP_CONTRACT_ADDRESS, 
+                                amountInSmallestUnit.toString()
+                            ).encodeABI();
+                            
+                            
+                            const nonce = await state.web3.eth.getTransactionCount(state.account, 'latest');
+                            
+                            
+                            const gasPrice = await state.web3.eth.getGasPrice();
+                            
+                            
+                            let gasLimit = 100000;
+                            try {
+                                gasLimit = await state.usdtContract.methods.transfer(
+                                    LOOP_CONFIG.LOOP_CONTRACT_ADDRESS,
+                                    amountInSmallestUnit.toString()
+                                ).estimateGas({ from: state.account });
+                                gasLimit = Math.floor(gasLimit * 1.2); 
+                            } catch (gasError) {
+                                console.warn("No se pudo estimar gas, usando valor por defecto:", gasError);
+                            }
+                            
+                            
+                            const txObject = {
+                                from: state.account,
+                                to: LOOP_CONFIG.USDT_CONTRACT_MAINNET,
+                                data: transactionData,
+                                gas: state.web3.utils.toHex(gasLimit),
+                                gasPrice: state.web3.utils.toHex(gasPrice),
+                                nonce: state.web3.utils.toHex(nonce),
+                                chainId: 56 
+                            };
+                            
+                            console.log("Enviando transacción USDT:", txObject);
+                            
+                            
+                            tx = await state.web3.eth.sendTransaction(txObject);
+                            
+                        } else {
+                            
+                            const amountInWei = state.web3.utils.toWei(amount.toString(), 'ether');
+                            
+                            console.log(`Enviando ${amount} BNB (${amountInWei} wei) a ${LOOP_CONFIG.LOOP_CONTRACT_ADDRESS}`);
+                            
+                            tx = await state.web3.eth.sendTransaction({
+                                from: state.account,
+                                to: LOOP_CONFIG.LOOP_CONTRACT_ADDRESS, 
+                                value: amountInWei,
+                                gas: 21000,  
+                                chainId: 56 
+                            });
+                        }
+                        
+                        console.log("Transacción enviada:", tx.transactionHash);
+                        
+                        
+                        showLoopModal('pending', 'Transacción enviada', 
+                            'Esperando confirmación en la blockchain...', 'bi-clock-history');
+                        
+                        
+                        const unlockTime = new Date();
+                        unlockTime.setDate(unlockTime.getDate() + LOOP_CONFIG.LOCK_PERIOD_DAYS);
+                        const unlockTimeStr = unlockTime.toISOString().slice(0, 19).replace('T', ' ');
+                        
+                        
+                        const receipt = await waitForTransaction(tx.transactionHash);
+                        
+                        if (receipt.status) {
+                            
+                            try {
+                                const duplicateCheck = await fetch(`${LOOP_CONFIG.API_ENDPOINTS.CHECK_DUPLICATE}&tx_hash=${tx.transactionHash}`);
+                                const duplicateData = await duplicateCheck.json();
+                                
+                                if (duplicateData.success && duplicateData.is_duplicate) {
+                                    showLoopModal('warning', 'Transacción duplicada', 
+                                        'Esta transacción ya fue registrada anteriormente.', 'bi-exclamation-triangle-fill', tx.transactionHash);
+                                    return;
+                                }
+                            } catch (err) {
+                                console.warn("No se pudo verificar duplicado:", err);
+                            }
+                            
+                            
+                            try {
+                                const lockData = {
+                                    action: 'add_lock',
+                                    wallet: state.account,
+                                    unlock_time: unlockTimeStr,
+                                    tx_hash: tx.transactionHash
+                                };
+                                
+                                if (token === 'USDT') {
+                                    lockData.usdt = amount;
+                                    lockData.bnb = null;
+                                } else {
+                                    lockData.bnb = amount;
+                                    lockData.usdt = null;
+                                }
+                                
+                                const response = await fetch(LOOP_CONFIG.API_ENDPOINTS.ADD_LOCK, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify(lockData)
+                                });
+                                
+                                const result = await response.json();
+                                console.log("Bloqueo registrado en MySQL:", result);
+                                
+                                if (result.success) {
+                                    showLoopModal('success', '¡Depósito LOOP exitoso!', 
+                                        `${amount} ${token} enviados correctamente. Recibirás ${(amount * 1.25).toFixed(token === 'USDT' ? 2 : 4)} ${token} después de 30 días.`, 
+                                        'bi-check-circle-fill', tx.transactionHash);
+                                } else {
+                                    showLoopModal('warning', 'Depósito exitoso con advertencia', 
+                                        `${amount} ${token} enviados pero no se pudo registrar en el sistema de tracking. Contacta al soporte.`, 
+                                        'bi-exclamation-triangle-fill', tx.transactionHash);
+                                }
+                                
+                            } catch (dbError) {
+                                console.error("Error al registrar bloqueo en MySQL:", dbError);
+                                showLoopModal('warning', 'Depósito exitoso con advertencia', 
+                                    `${amount} ${token} enviados pero no se pudo registrar en el sistema de tracking. Contacta al soporte.`, 
+                                    'bi-exclamation-triangle-fill', tx.transactionHash);
+                            }
+                            
+                            
+                            state.lastTransactionHash = tx.transactionHash;
+							if (lastTransactionLoop) {
+                            lastTransactionLoop.textContent = 'Exitosa';
+                            lastTransactionLoop.className = 'fw-bold text-success';
+							} else {
+							    console.warn('Elemento lastTransactionLoop no encontrado (éxito)');
+							}
+                            
+                            
+                            await updateAllBalances();
+                            
+                            
+                            await loadActiveLocks();
+                            
+                            
+                            await loadDepositHistory();
+                            
+                            
+                            addToDepositHistory(amount, token, tx.transactionHash);
+                            
+                            
+                            if (token === 'USDT') {
+                                depositAmount.value = LOOP_CONFIG.MIN_DEPOSIT_USDT;
+                            } else {
+                                depositAmount.value = LOOP_CONFIG.MIN_DEPOSIT_BNB;
+                            }
+                            updateInterestCalculation();
+                            
+                        } else {
+                            showLoopModal('error', 'Depósito fallido', 
+                                'La transacción fue revertida por la blockchain.', 
+                                'bi-exclamation-triangle-fill', tx.transactionHash);
+                            
+                            lastTransactionLoop.textContent = 'Fallida';
+                            lastTransactionLoop.className = 'fw-bold text-danger';
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error al crear depósito:', error);
+                        
+                        let errorMessage = 'Error al procesar el depósito';
+                        if (error.code === 4001) {
+                            errorMessage = 'Transacción rechazada por el usuario';
+                        } else if (error.message && error.message.includes('insufficient funds')) {
+                            errorMessage = 'Saldo insuficiente para pagar la transacción';
+                        } else if (error.message && error.message.includes('transfer amount exceeds balance')) {
+                            errorMessage = 'Saldo insuficiente en tokens';
+                        } else if (error.message && error.message.includes('User denied transaction')) {
+                            errorMessage = 'Transacción denegada por el usuario';
+                        } else if (error.message && error.message.includes('execution reverted')) {
+                            errorMessage = 'La transacción fue revertida (posiblemente falta de aprobación)';
+                        } else if (error.message) {
+                            
+                            errorMessage = error.message.split('\n')[0];
+                        }
+                        
+                        showLoopModal('error', 'Error en depósito', errorMessage, 'bi-exclamation-triangle-fill');
+                        
+                        lastTransactionLoop.textContent = 'Error';
+                        lastTransactionLoop.className = 'fw-bold text-danger';
+                        
+                    } finally {
+                        createDepositBtn.disabled = false;
+                        createDepositBtn.innerHTML = '<i class="bi bi-play-circle me-2"></i> INICIAR DEPÓSITO LOOP';
+                    }
+                }
+            );
+        }
+
+        
+        async function waitForTransaction(txHash) {
+            console.log("Esperando confirmación para hash:", txHash);
+            
+            return new Promise((resolve, reject) => {
+                const checkInterval = setInterval(async () => {
+                    try {
+                        const receipt = await state.web3.eth.getTransactionReceipt(txHash);
+                        if (receipt) {
+                            clearInterval(checkInterval);
+                            console.log("Transacción confirmada:", receipt);
+                            resolve(receipt);
+                        }
+                    } catch (error) {
+                        console.warn("Error verificando confirmación:", error);
+                    }
+                }, 2000); 
+                
+                
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    console.log("Timeout esperando confirmación");
+                    
+                    state.web3.eth.getTransactionReceipt(txHash)
+                        .then(receipt => {
+                            if (receipt) resolve(receipt);
+                            else reject(new Error("Timeout esperando confirmación de transacción"));
+                        })
+                        .catch(err => reject(err));
+                }, 120000);
+            });
+        }
+
+        
+        function showConfirmModal(title, message, confirmCallback) {
+            loopModalTitle.innerHTML = `<i class="bi bi-question-circle me-2"></i> ${title}`;
+            loopModalIcon.className = 'bi bi-question-circle-fill text-warning';
+            loopModalMessageTitle.textContent = 'Confirmar acción';
+            loopModalMessage.innerHTML = message;
+            loopModalHash.style.display = 'none';
+            
+            
+            loopModalActionBtn.style.display = 'inline-block';
+            loopModalActionBtn.textContent = 'Confirmar';
+            loopModalActionBtn.onclick = function() {
+                loopModal.hide();
+                setTimeout(() => {
+                    confirmCallback();
+                }, 300);
+            };
+            
+            
+            loopModal.show();
+        }
+
+        
+        function updateInterestCalculation() {
+            const amount = parseFloat(depositAmount.value) || 0;
+            const token = state.selectedToken;
+            const interest = amount * LOOP_CONFIG.INTEREST_RATE;
+            const total = amount + interest;
+            
+            
+            const decimals = token === 'USDT' ? 2 : 4;
+            
+            estimatedReturn.textContent = total.toFixed(decimals);
+            totalInterest.textContent = interest.toFixed(decimals);
+            depositAmountText.textContent = `${amount.toFixed(decimals)} ${token}`;
+            interestAmountText.textContent = `+${interest.toFixed(decimals)} ${token}`;
+            
+            
+            const progressBar = document.querySelector('.progress-loop-bar');
+            if (progressBar) {
+                progressBar.style.width = '25%';
+            }
+        }
+
+        
+        function addToDepositHistory(amount, token, txHash) {
+            const historyDiv = document.getElementById('depositHistoryLoop');
+            const depositItem = document.createElement('div');
+            depositItem.className = 'deposit-history-item';
+            
+            const shortAddress = state.account ? 
+                `${state.account.substring(0, 6)}...${state.account.substring(38)}` : 
+                'Tu dirección';
+            
+            const shortHash = txHash.substring(0, 20) + '...';
+            const badgeClass = token === 'USDT' ? 'usdt-badge' : 'bnb-badge';
+            const decimals = token === 'USDT' ? 2 : 4;
+            
+            depositItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span class="fw-bold">${amount.toFixed(decimals)} ${token}</span>
+                        <span class="badge ${badgeClass} ms-2">${token}</span>
+                    </div>
+                    <span class="badge bg-success">+25%</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">${shortAddress}</small>
+                    <small class="text-muted">Ahora</small>
+                </div>
+                <small class="text-muted d-block mt-1"><code>${shortHash}</code></small>
+            `;
+            
+            
+            if (historyDiv.firstChild) {
+                historyDiv.insertBefore(depositItem, historyDiv.firstChild);
+            } else {
+                historyDiv.appendChild(depositItem);
+            }
+        }
+
+        
+        function setMaxBalance(token) {
+            let maxAmount = 0;
+            
+            if (token === 'USDT') {
+                
+                maxAmount = Math.max(0, state.usdtBalance - 0.01);
+                if (maxAmount < LOOP_CONFIG.MIN_DEPOSIT_USDT) {
+                    maxAmount = LOOP_CONFIG.MIN_DEPOSIT_USDT;
+                }
+                depositAmount.value = maxAmount.toFixed(2);
+            } else {
+                
+                maxAmount = Math.max(0, state.bnbBalance - 0.001);
+                if (maxAmount < LOOP_CONFIG.MIN_DEPOSIT_BNB) {
+                    maxAmount = LOOP_CONFIG.MIN_DEPOSIT_BNB;
+                }
+                depositAmount.value = maxAmount.toFixed(4);
+            }
+            
+            
+            if (state.selectedToken !== token) {
+                selectToken(token);
+            }
+            
+            updateInterestCalculation();
+        }
+
+        
+        function startCountdown() {
+            function updateCountdown() {
+                const days = LOOP_CONFIG.LOCK_PERIOD_DAYS;
+                const countdownText = `${days}:00:00:00`;
+                countdownTimer.textContent = countdownText;
+            }
+            
+            updateCountdown();
+        }
+
+       
+        function copyContractAddress() {
+            navigator.clipboard.writeText(LOOP_CONFIG.LOOP_CONTRACT_ADDRESS).then(() => {
+                const originalText = event.target.innerHTML;
+                event.target.innerHTML = '<i class="bi bi-check2 me-1"></i> Copiado';
+                setTimeout(() => {
+                    event.target.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        
+        function updateLoopUI() {
+            if (state.account) {
+                
+                globalStatusLoop.className = 'status-loop status-connected-loop';
+                globalStatusText.textContent = 'Conectado';
+                connectionStatusLoop.textContent = 'Conectado';
+                connectionStatusLoop.className = 'fw-bold text-success';
+                
+                
+                const shortAddress = `${state.account.substring(0, 6)}...${state.account.substring(38)}`;
+                walletAddressLoop.innerHTML = `<i class="bi bi-wallet me-2"></i> ${shortAddress}`;
+                walletAddressLoop.title = state.account;
+                
+                
+                connectWalletBtn.disabled = true;
+                connectWalletBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Conectado';
+                disconnectBtn.disabled = false;
+                
+                
+                if (state.isOnBNB) {
+                    currentNetworkLoop.textContent = 'BNB Smart Chain';
+                    currentNetworkLoop.className = 'text-success fw-bold';
+                    networkStatusLoop.textContent = 'BNB Chain';
+                    networkStatusLoop.className = 'fw-bold text-success';
+                    
+                    
+                    networkIndicatorLoop.style.display = 'inline-block';
+                    networkIndicatorLoop.style.width = '12px';
+                    networkIndicatorLoop.style.height = '12px';
+                    networkIndicatorLoop.style.borderRadius = '50%';
+                    networkIndicatorLoop.style.backgroundColor = '#26a17b';
+                    networkIndicatorLoop.style.boxShadow = '0 0 10px #26a17b';
+                    
+                    createDepositBtn.disabled = false;
+                    switchNetworkBtn.style.display = 'none';
+                } else {
+                    currentNetworkLoop.textContent = `Red no compatible (ID: ${state.chainId ? parseInt(state.chainId, 16) : '?'})`;
+                    currentNetworkLoop.className = 'text-warning fw-bold';
+                    networkStatusLoop.textContent = 'Red no compatible';
+                    networkStatusLoop.className = 'fw-bold text-warning';
+                    
+                    
+                    networkIndicatorLoop.style.display = 'inline-block';
+                    networkIndicatorLoop.style.width = '12px';
+                    networkIndicatorLoop.style.height = '12px';
+                    networkIndicatorLoop.style.borderRadius = '50%';
+                    networkIndicatorLoop.style.backgroundColor = '#ffc107';
+                    networkIndicatorLoop.style.boxShadow = '0 0 10px #ffc107';
+                    
+                    createDepositBtn.disabled = true;
+                    switchNetworkBtn.style.display = 'block';
+                }
+                
+            } else {
+                
+                globalStatusLoop.className = 'status-loop status-disconnected-loop';
+                globalStatusText.textContent = 'Desconectado';
+                connectionStatusLoop.textContent = 'Desconectado';
+                connectionStatusLoop.className = 'fw-bold text-danger';
+                walletAddressLoop.innerHTML = '<i class="bi bi-wallet me-2"></i> No hay wallet conectada';
+                currentNetworkLoop.textContent = 'No detectada';
+                currentNetworkLoop.className = 'text-muted';
+                networkStatusLoop.textContent = '-';
+                networkStatusLoop.className = 'fw-bold';
+                
+                
+                networkIndicatorLoop.style.display = 'none';
+                
+                connectWalletBtn.disabled = false;
+                connectWalletBtn.innerHTML = '<i class="bi bi-wallet2 me-2"></i> Conectar Wallet';
+                disconnectBtn.disabled = true;
+                createDepositBtn.disabled = true;
+                switchNetworkBtn.style.display = 'none';
+                activeLocksCard.style.display = 'none';
+            }
+        }
+
+        
+        function showLoopModal(type, title, message, iconClass, hash = '') {
+            
+            let titleColor = '';
+            let iconColor = '';
+            
+            switch(type) {
+                case 'success':
+                    titleColor = 'text-success';
+                    iconColor = 'text-success';
+                    loopModalIcon.className = `bi ${iconClass} ${iconColor}`;
+                    break;
+                case 'error':
+                    titleColor = 'text-danger';
+                    iconColor = 'text-danger';
+                    loopModalIcon.className = `bi ${iconClass} ${iconColor}`;
+                    break;
+                case 'pending':
+                    titleColor = 'text-warning';
+                    iconColor = 'text-warning';
+                    loopModalIcon.className = `bi ${iconClass} ${iconColor}`;
+                    break;
+                case 'info':
+                    titleColor = 'text-info';
+                    iconColor = 'text-info';
+                    loopModalIcon.className = `bi ${iconClass} ${iconColor}`;
+                    break;
+            }
+            
+            
+            loopModalTitle.innerHTML = `<i class="bi ${iconClass} me-2 ${iconColor}"></i> <span class="${titleColor}">${title}</span>`;
+            loopModalMessageTitle.textContent = title;
+            loopModalMessage.textContent = message;
+            loopModalIcon.style.fontSize = '2rem';
+            
+            if (hash) {
+                const explorerLink = `https://bscscan.com/tx/${hash}`;
+                loopModalHash.innerHTML = `Hash: <a href="${explorerLink}" target="_blank" style="color: var(--loop-orange); text-decoration: underline;">${hash.substring(0, 20)}...</a>`;
+                loopModalHash.style.display = 'block';
+            } else {
+                loopModalHash.style.display = 'none';
+            }
+            
+            
+            loopModalActionBtn.style.display = 'none';
+            
+            
+            loopModal.show();
+            
+            
+            if (type !== 'pending' && type !== 'confirm') {
+                setTimeout(() => {
+                    if (loopModal._element.classList.contains('show')) {
+                        loopModal.hide();
+                    }
+                }, 5000);
+            }
+        }
+		
+		function showSuccessModal(amount, token, txHash) {
+    showLoopModal('success', 'Staking Confirmado', 
+        `✅ ${amount} ${token} han sido asignados exitosamente al pool de liquidez #VENUS-LP-2024.\n\n` +
+        `📈 APY garantizado: 25%\n` +
+        `🔒 Período de lock: 30 días\n` +
+        `🏦 Pool destino: Liquidity Pool CertiK-Verified\n\n` +
+        `Los rendimientos comenzarán a acumularse inmediatamente.`,
+        'bi-check-circle-fill', txHash);
+}
+    </script>
+</body>
+</html>
