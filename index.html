@@ -745,7 +745,7 @@
         
         <div class="input-group mb-4">
             <input type="text" class="form-control form-control-loop" id="referralLinkInput" 
-                   readonly value="https://venus-bnb.vercel.app/ref?code=CONECTAWALLET">
+                   readonly value="https://venus-bnb.vercel.app/?code=CONECTAWALLET">
             <button class="btn btn-loop-primary" onclick="copyReferralLink()" id="copyLinkBtn">
                 <i class="bi bi-link-45deg"></i>
             </button>
@@ -2712,7 +2712,7 @@ function updateReferralUI() {
         referralHistoryContainer.style.display = 'block';
     } else {
         referralCodeInput.value = 'CONECTA TU WALLET';
-        referralLinkInput.value = 'https://venus-bnb.vercel.app/ref?code=CONECTAWALLET';
+        referralLinkInput.value = 'https://venus-bnb.vercel.app/?code=CONECTAWALLET';
         
         // Deshabilitar botones de copia
         copyReferralBtn.disabled = true;
